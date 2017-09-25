@@ -1,0 +1,6 @@
+repo: 69e5f80771d81334ad8901906131fe1718d11cc4
+node: 43011994ae74ebf5e39bfe0055990cb349a4ae09
+branch: default
+latesttag: unity-5.5
+latesttagdistance: 6
+changessincelatesttag: 6

@@ -1,0 +1,15 @@
+﻿  OpenCVTest.cpp
+..\..\source\OpenCVTest.cpp(175): warning C4305: 'argument': truncation from 'double' to 'float'
+..\..\source\OpenCVTest.cpp(117): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+..\..\source\OpenCVTest.cpp(168): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+..\..\source\OpenCVTest.cpp(205): warning C4305: 'argument': truncation from 'double' to 'float'
+..\..\source\OpenCVTest.cpp(198): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+..\..\source\OpenCVTest.cpp(227): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Debug\RenderingPlugin.dll
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Debug\RenderingPlugin.pdb (Full PDB)
+  Target Plugin Path is C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\..\UnityProject\Assets\Plugins\x86_64
+          1 file(s) copied.

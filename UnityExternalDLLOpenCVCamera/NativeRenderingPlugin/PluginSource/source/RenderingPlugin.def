@@ -1,0 +1,18 @@
+; file used by Visual Studio plugin builds, mostly for 32-bit
+; to stop mangling our exported function names
+
+LIBRARY
+
+EXPORTS
+   UnityPluginLoad
+   UnityPluginUnload
+   Set_debug_log_func
+   Debug_log_test
+   SetProjectionParameters
+   SetProjectionMatrixFromUnity
+   SetViewMatrixFromUnity
+   SetCharArrayFromUnity
+   SetTimeFromUnity
+   SetTextureFromUnity
+   SetMeshBuffersFromUnity
+   GetRenderEventFunc

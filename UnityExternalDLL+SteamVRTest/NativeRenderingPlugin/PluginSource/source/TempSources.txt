@@ -1,0 +1,471 @@
+
+static void DrawColoredTriangle()
+{
+	// Draw a colored triangle. Note that colors will come out differently
+	// in D3D and OpenGL, for example, since they expect color bytes
+	// in different ordering.
+	struct MyVertex
+	{
+		float x, y, z;
+		float r, g, b, a;
+	};
+	MyVertex verts[3] =
+	{
+		//{ -5.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f },//{ -0.5f, -0.25f,  0, 0xFFff0000 },
+		//{ 0.0f, 5.0f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f },//{ 0,     0.5f ,  0, 0xFF0000ff },
+		//{ 5.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },//{ 0.5f, -0.25f,  0, 0xFF00ff00 },
+		{ -0.5f, -0.25f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f },//{ -0.5f, -0.25f,  0, 0xFFff0000 },
+		{ 0.5f, -0.25f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f },//{ 0,     0.5f ,  0, 0xFF0000ff },
+		{ 0,     0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },//{ 0.5f, -0.25f,  0, 0xFF00ff00 },
+	};
+
+	// Transformation matrix: rotate around Z axis based on time.
+	float phi = g_Time; // time set externally from Unity script
+	float cosPhi = cosf(phi);
+	float sinPhi = sinf(phi);
+	float depth = 0.7f;
+	//float finalDepth = s_CurrentAPI->GetUsesReverseZ() ? 1.0f - depth : depth;
+	/*
+	float worldMatrix[16] = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1,
+	};
+	*/
+	float worldMatrix[16] = {
+		cosPhi,-sinPhi,0,0,
+		sinPhi,cosPhi,0,0,
+		0,0,1,0,
+		0,0,0.7f,1,
+	};
+
+	/*
+	float worldMatrix[16] = {
+		cosPhi,-sinPhi,0,0,
+		sinPhi,cosPhi,0,0,
+		0,0,1,0,
+		0,0,finalDepth,1,
+	};
+	*/
+	s_CurrentAPI->DrawSimpleTriangles(worldMatrix, (float *)g_viewMatrix, (float *)g_projMatrix, 1, verts);
+}
+
+
+void RenderAPI_D3D11::CreateResources()
+{
+	OutputDebugStringA("Resources creation");
+
+	D3D11_BUFFER_DESC desc;
+	memset(&desc, 0, sizeof(desc));
+
+	// vertex buffer
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.ByteWidth = 1024; // change in case
+	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_Device->CreateBuffer(&desc, NULL, &m_VB);
+
+	// constant buffer
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.ByteWidth = sizeof(MatrixBufferType); // hold 1 matrix
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	desc.CPUAccessFlags = 0;
+	m_Device->CreateBuffer(&desc, NULL, &m_CB);
+
+	/*
+	// shaders
+	HRESULT hr;
+	hr = m_Device->CreateVertexShader(kVertexShaderCode, sizeof(kVertexShaderCode), nullptr, &m_VertexShader);
+	if (FAILED(hr))
+		OutputDebugStringA("Failed to create vertex shader.\n");
+	hr = m_Device->CreatePixelShader(kPixelShaderCode, sizeof(kPixelShaderCode), nullptr, &m_PixelShader);
+	if (FAILED(hr))
+		OutputDebugStringA("Failed to create pixel shader.\n");
+
+	// input layout
+	if (m_VertexShader)
+	{
+		D3D11_INPUT_ELEMENT_DESC s_DX11InputElementDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+		m_Device->CreateInputLayout(s_DX11InputElementDesc, 2, kVertexShaderCode, sizeof(kVertexShaderCode), &m_InputLayout);
+	}
+	*/
+
+	initializeShaders(L"C:\\Users\\Public\\Documents\\Unity Projects\\UnityExternalDLL\\NativeRenderingPlugin\\PluginSource\\build\\x64\\Release\\VertexShaderAAA.cso", 
+					  L"C:\\Users\\Public\\Documents\\Unity Projects\\UnityExternalDLL\\NativeRenderingPlugin\\PluginSource\\build\\x64\\Release\\PixelShasdfs.cso");
+	
+	// render states
+	D3D11_RASTERIZER_DESC rsdesc;
+	memset(&rsdesc, 0, sizeof(rsdesc));
+	rsdesc.FillMode = D3D11_FILL_SOLID;
+	rsdesc.CullMode = D3D11_CULL_NONE;
+	rsdesc.DepthClipEnable = TRUE;
+	m_Device->CreateRasterizerState(&rsdesc, &m_RasterState);
+
+	D3D11_DEPTH_STENCIL_DESC dsdesc;
+	memset(&dsdesc, 0, sizeof(dsdesc));
+	dsdesc.DepthEnable = TRUE;
+	dsdesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	dsdesc.DepthFunc = GetUsesReverseZ() ? D3D11_COMPARISON_GREATER_EQUAL : D3D11_COMPARISON_LESS_EQUAL;
+	m_Device->CreateDepthStencilState(&dsdesc, &m_DepthState);
+
+	D3D11_BLEND_DESC bdesc;
+	memset(&bdesc, 0, sizeof(bdesc));
+	bdesc.RenderTarget[0].BlendEnable = FALSE;
+	bdesc.RenderTarget[0].RenderTargetWriteMask = 0xF;
+	m_Device->CreateBlendState(&bdesc, &m_BlendState);
+}
+
+
+void RenderAPI_D3D11::initializeShaders(const std::wstring &fileNameVS, const std::wstring &fileNamePS)
+{
+//SetCurrentDirectory(Utility::ExecutableDirectory().c_str());
+
+std::vector<char> compiledVS;
+Utility::LoadBinaryFile(fileNameVS, compiledVS);
+
+HRESULT hr;
+hr = m_Device->CreateVertexShader(&compiledVS[0], compiledVS.size(), nullptr, &m_VertexShader);
+if (FAILED(hr)) {
+OutputDebugStringA("Failed to create vertex shader.\n");
+}
+
+std::vector<char> compiledPS;
+Utility::LoadBinaryFile(fileNamePS, compiledPS);
+
+hr = m_Device->CreatePixelShader(&compiledPS[0], compiledPS.size(), nullptr, &m_PixelShader);
+if (FAILED(hr)) {
+OutputDebugStringA("Failed to create pixel shader.\n");
+}
+/*
+D3D11_INPUT_ELEMENT_DESC s_DX11InputElementDesc[] =
+{
+{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+{ "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+*/
+
+D3D11_INPUT_ELEMENT_DESC inputLayout[2];
+
+// Now setup the layout of the data that goes into the shader.
+// This setup needs to match the VertexType structure in the ModelClass and in the shader.
+inputLayout[0].SemanticName = "POSITION";
+inputLayout[0].SemanticIndex = 0;
+inputLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+inputLayout[0].InputSlot = 0;
+inputLayout[0].AlignedByteOffset = 0;
+inputLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+inputLayout[0].InstanceDataStepRate = 0;
+
+inputLayout[1].SemanticName = "COLOR";
+inputLayout[1].SemanticIndex = 0;
+inputLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+inputLayout[1].InputSlot = 0;
+inputLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+inputLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+inputLayout[1].InstanceDataStepRate = 0;
+
+m_Device->CreateInputLayout(inputLayout, ARRAYSIZE(inputLayout), &compiledVS[0], compiledVS.size(), &m_InputLayout);
+
+}
+
+
+void RenderAPI_D3D11::DrawSimpleTriangles(const float worldMatrix[16], const float viewMatrix[16], const float projMatrix[16], int triangleCount, const void* verticesFloat3Byte4)
+{
+	ID3D11DeviceContext* ctx = NULL;
+	m_Device->GetImmediateContext(&ctx);
+
+	// Set basic render state
+	ctx->OMSetDepthStencilState(m_DepthState, 0);
+	ctx->RSSetState(m_RasterState);
+	ctx->OMSetBlendState(m_BlendState, NULL, 0xFFFFFFFF);
+
+	XMMATRIX w = XMLoadFloat4x4((XMFLOAT4X4*)worldMatrix);
+	XMMATRIX v = XMLoadFloat4x4((XMFLOAT4X4*)viewMatrix);
+	XMMATRIX p = XMLoadFloat4x4((XMFLOAT4X4*)projMatrix);
+	XMMATRIX wvp = w;
+	//XMMATRIX wvp = XMMatrixTranspose(XMMatrixMultiply(w, XMMatrixMultiply(v, p)));
+	MatrixBufferType cbmat;
+	//cbmat.wvp
+	XMStoreFloat4x4(&cbmat.wvp, wvp);
+
+	// Update constant buffer - just the world matrix in our case
+	ctx->UpdateSubresource(m_CB, 0, NULL, &cbmat.wvp, sizeof(MatrixBufferType), 0);
+
+	// Set shaders
+	ctx->VSSetConstantBuffers(0, 1, &m_CB);
+	ctx->VSSetShader(m_VertexShader, NULL, 0);
+	ctx->PSSetShader(m_PixelShader, NULL, 0);
+
+	// Update vertex buffer
+	const int kVertexSize = BasicMaterialVertex::VertexSize();
+	ctx->UpdateSubresource(m_VB, 0, NULL, verticesFloat3Byte4, triangleCount * 3 * kVertexSize, 0);
+
+	// set input assembler data and draw
+	ctx->IASetInputLayout(m_InputLayout);
+	ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	UINT stride = kVertexSize;
+	UINT offset = 0;
+	ctx->IASetVertexBuffers(0, 1, &m_VB, &stride, &offset);
+	ctx->Draw(triangleCount * 3, 0);
+
+	ctx->Release();
+}
+
+
+
+static void DrawColoredTriangle()
+{
+	// Draw a colored triangle. Note that colors will come out differently
+	// in D3D and OpenGL, for example, since they expect color bytes
+	// in different ordering.
+
+	// Transformation matrix: rotate around Z axis based on time.
+	float phi = g_Time; // time set externally from Unity script
+	float cosPhi = cosf(phi);
+	float sinPhi = sinf(phi);
+	float depth = 0.7f;
+	float finalDepth = s_CurrentAPI->GetUsesReverseZ() ? 1.0f - depth : depth;
+	
+
+	RenderAPI_D3D11 *d3dRenderApi = dynamic_cast<RenderAPI_D3D11*>(s_CurrentAPI);
+	if (d3dRenderApi) {
+		/*
+		finalDepth = 0.0f;
+		float worldMatrix[16] = {
+			cosPhi,-sinPhi,0,0,
+			sinPhi,cosPhi,0,0,
+			0,0,1,0,
+			0,0,0,1,
+		};*/
+		
+		float worldMatrix[16] = {
+			cosPhi,sinPhi,0,0,
+			-sinPhi,cosPhi,0,0,
+			0,0,1,0,
+			0,0,5.0f,1, //tx,ty,tz,1
+		};
+
+		/*
+		float worldMatrix[16] = {
+			cosPhi,sinPhi,0,0,
+			-sinPhi,cosPhi,0,0,
+			0,0,1,0,
+			0,0,0,1,
+		};
+		*/
+
+		BasicMaterialVertex vertsD3D11[3] = {
+			//BasicMaterialVertex(XMFLOAT3(-0.5f, -0.5f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
+			//BasicMaterialVertex(XMFLOAT3(0,     0.5f ,  0), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)),
+			//BasicMaterialVertex(XMFLOAT3(0.5f, -0.5f,  0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)),
+			BasicMaterialVertex(XMFLOAT3(-4.0f, -4.0f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
+			BasicMaterialVertex(XMFLOAT3(0,     4.0f ,  0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)),
+			BasicMaterialVertex(XMFLOAT3(4.0f, -4.0f,  0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)),
+		};
+
+
+
+		XMFLOAT4X4 pproj = XMFLOAT4X4(1.0f, 0.0f, 0.0f, 0.0f,
+										0.0f, 1.0f, 0.0f, 0.0f,
+										0.0f, 0.0f, 1.0f, 0.0f,
+										0.0f, 0.0f, 0.0f, 1.0f);
+
+		//printMatrix((float *)(g_projMatrix));
+		///*
+		XMFLOAT4X4 *projMat = (XMFLOAT4X4*)&pproj; //g_projMatrix;
+		projMat->m[0][0] = 1 / (aspectRatio * tanf(vFov / 2));
+		projMat->m[1][1] = 1 / tanf(vFov / 2);
+
+		projMat->m[2][2] = (farPlane) / (farPlane - nearPlane);
+		projMat->m[2][3] = 1.0f;
+		projMat->m[3][2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
+		/*
+		projMat->m[2][2] = (farPlane + nearPlane) / (farPlane - nearPlane);
+		projMat->m[2][3] = 1.0f;
+		projMat->m[3][2] = (2 * farPlane * nearPlane) / (nearPlane - farPlane);*/
+		//printMatrix((float *)(g_projMatrix));
+		//*/
+		/*
+		projMat->m[2][2] = (farPlane) / (farPlane - nearPlane);
+		projMat->m[2][3] = 1.0f;
+		projMat->m[3][2] = (- farPlane * nearPlane) / (farPlane - nearPlane);
+		*/
+
+		/*
+		//XMMATRIX projXM = XMMatrixPerspectiveFovLH(1.047198, 2.641791, 1, 30);
+		//sprintf((char*)g_charArray, "%f %f %f %f", vFov, aspectRatio, nearPlane, farPlane);
+		// Projection matrix computation
+		XMMATRIX projXM = XMMatrixPerspectiveFovLH(vFov, aspectRatio, nearPlane, farPlane);
+		
+		XMStoreFloat4x4(&pproj, projXM);
+		//printMatrix((float *)(&pproj));
+		*/
+
+		//printMatrix((float *)(g_viewMatrix));
+		/*
+		XMFLOAT4X4 *mView = (XMFLOAT4X4 *)(g_viewMatrix);
+		XMMATRIX view = XMMatrixInverse(nullptr, XMLoadFloat4x4(mView));
+		XMStoreFloat4x4(mView, view);
+		printMatrix((float *)(g_viewMatrix));
+		*/
+		d3dRenderApi->DrawSimpleTrianglesD3D11((XMFLOAT4X4 *)(worldMatrix), (XMFLOAT4X4 *)(g_viewMatrix), (XMFLOAT4X4 *)(&pproj), 1, vertsD3D11); // &pproj
+
+
+		BasicMaterialVertex verts2D3D11[3] = {
+			//BasicMaterialVertex(XMFLOAT3(-0.5f, -0.5f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
+			//BasicMaterialVertex(XMFLOAT3(0,     0.5f ,  0), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)),
+			//BasicMaterialVertex(XMFLOAT3(0.5f, -0.5f,  0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)),
+			BasicMaterialVertex(XMFLOAT3(-4.0f, -4.0f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
+			BasicMaterialVertex(XMFLOAT3(0,     4.0f ,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
+			BasicMaterialVertex(XMFLOAT3(4.0f, -4.0f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)),
+		};
+
+		float worldMatrix2[16] = {
+			0,0,1,0,
+			0,1,0,0,
+			-1,0,0,0,
+			0,0,5.0f,1, //tx,ty,tz,1
+		};
+
+		d3dRenderApi->DrawSimpleTrianglesD3D11((XMFLOAT4X4 *)(worldMatrix2), (XMFLOAT4X4 *)(g_viewMatrix), (XMFLOAT4X4 *)(&pproj), 1, verts2D3D11); // &pproj
+
+	}
+	else {
+		float worldMatrix[16] = {
+			cosPhi,-sinPhi,0,0,
+			sinPhi,cosPhi,0,0,
+			0,0,1,0,
+			0,0,finalDepth,1,
+		};
+		struct MyVertex
+		{
+			float x, y, z;
+			float r, g, b, a;
+		};
+		MyVertex verts[3] =
+		{
+			{ -0.5f, -0.25f,  0,    1.0f, 0.0f, 0.0f, 1.0f },
+			{ 0.5f, -0.25f,  0,     0.0f, 1.0f, 0.0f, 1.0f },
+			{ 0,     0.5f ,  0,     0.0f, 0.0f, 1.0f, 1.0f },
+		};
+
+		//s_CurrentAPI->DrawSimpleTriangles(worldMatrix, 0, 0, 1, verts);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+int OpenCVImpl::get_surface()
+{
+	/*
+	static bool fl = false;
+
+	HRESULT r;
+
+	if (fl) return 0;
+	fl = true;
+
+	if (!m_cap.read(m_frame_bgr))
+		return -1;
+
+	cvtColor(m_frame_bgr, m_frame_rgba, CV_BGR2RGBA);
+	*/
+
+	/*
+	// process video frame on CPU
+	UINT subResource = ::D3D11CalcSubresource(0, 0, 1);
+
+	D3D11_MAPPED_SUBRESOURCE mappedTex;
+	r = m_pD3D11Ctx->Map(m_pSurfaceRGBA, subResource, D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
+	if (FAILED(r))
+	{
+		sprintf((char*)textBuffer, "surface mapping failed!");
+		throw std::runtime_error("surface mapping failed!");
+	}
+
+	Mat m(m_height, m_width, CV_8UC4, mappedTex.pData, mappedTex.RowPitch);
+	
+	m_frame_rgba.copyTo(m);
+	
+	m_pD3D11Ctx->Unmap(m_pSurfaceRGBA, subResource);
+	*/
+	return 0;
+}
+
+void OpenCVImpl::render()
+{
+
+	if (!m_cap.read(m_frame_bgr))
+		return;
+
+	cvtColor(m_frame_bgr, m_frame_rgba, CV_BGR2RGBA);
+
+	UMat u;
+	vector<KeyPoint> keypoints;
+	UMat descriptors;
+
+	//cv::blur(u, u, cv::Size(15, 15), cv::Point(-7, -7));
+
+	//cv::directx::convertFromD3D11Texture2D(m_pSurfaceRGBA, u);
+
+	//m_frame_rgba.copyTo(u);
+	//cv::blur(u, u, cv::Size(15, 15), cv::Point(-7, -7));
+
+	
+	//m_frame_rgba.copyTo(u);
+	UMat grayFrame;
+	cvtColor(m_frame_bgr, grayFrame, COLOR_RGBA2GRAY);
+	
+	//cvtColor(u, grayFrame, COLOR_RGBA2GRAY);
+	//cvtColor(u, grayFrame, COLOR_RGBA2GRAY);
+
+	m_timer.start();
+	//detector->detect(grayFrame, keypoints);
+	m_detector->detectAndCompute(grayFrame, UMat(), keypoints, descriptors);
+	m_timer.stop();
+	//sprintf((char*)textBuffer, "%d ", keypoints.size());
+	//detector->detect(grayFrame, keypoints);
+	
+
+	/*
+	drawKeypoints(grayFrame, keypoints,
+		u, Scalar(255, 255, 255),
+		DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+	*/
+	///cvtColor(grayFrame, u, COLOR_GRAY2RGBA);
+
+	//dst.copyTo(u);
+	// process video frame on GPU
+	///*
+	
+	/*
+	cv::String strTime = cv::format("time: %4.1f msec", m_timer.time(Timer::UNITS::MSEC));
+	cv::String strDevName = cv::format("OpenCL device: %s", m_oclDevName.c_str());
+	cv::String detectionInfo = cv::format("Num keypoints: %d, Num Descr: %d",
+		keypoints.size(), descriptors.rows);
+
+	
+	cv::putText(m_frame_rgba, strTime, cv::Point(0, 16), 1, 0.8, cv::Scalar(0, 0, 0));
+	cv::putText(m_frame_rgba, strDevName, cv::Point(0, 32), 1, 0.8, cv::Scalar(0, 0, 0));
+	cv::putText(m_frame_rgba, detectionInfo, cv::Point(0, 48), 1, 0.8, cv::Scalar(0, 0, 0));
+	*/
+
+	//cv::directx::convertToD3D11Texture2D(u, m_pSurfaceRGBA);
+	
+	cv::directx::convertToD3D11Texture2D(m_frame_rgba, m_pSurfaceRGBA);
+
+}
+

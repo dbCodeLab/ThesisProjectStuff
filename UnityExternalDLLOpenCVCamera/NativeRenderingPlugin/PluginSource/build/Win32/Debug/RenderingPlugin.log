@@ -1,0 +1,6 @@
+﻿glew.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+     Creating library C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\Win32\Debug\RenderingPlugin.lib and object C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\Win32\Debug\RenderingPlugin.exp
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\Win32\Debug\RenderingPlugin.dll
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\Win32\Debug\RenderingPlugin.pdb (Full PDB)
+  Target Plugin Path is C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\..\UnityProject\Assets\Plugins\x86
+          1 file(s) copied.

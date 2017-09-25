@@ -1,0 +1,15 @@
+﻿  RenderingPlugin.cpp
+RenderingPlugin.obj : warning LNK4197: export 'UnityPluginLoad' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'UnityPluginUnload' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetProjectionParameters' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetProjectionMatrixFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetViewMatrixFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetTimeFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetTextureFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetMeshBuffersFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'GetRenderEventFunc' specified multiple times; using first specification
+     Creating library C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Debug\RenderingPlugin.lib and object C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Debug\RenderingPlugin.exp
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Debug\RenderingPlugin.dll
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Debug\RenderingPlugin.pdb (Full PDB)
+  Target Plugin Path is C:\Users\Public\Documents\Unity Projects\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\..\UnityProject\Assets\Plugins\x86_64
+          1 file(s) copied.

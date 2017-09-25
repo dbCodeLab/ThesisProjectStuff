@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamVRCalibrationProject", "SteamVRCalibrationProject.csproj", "{314773C9-7489-2E09-7C85-CA6F03774047}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamVRCalibrationProject.Editor", "SteamVRCalibrationProject.Editor.csproj", "{F59CBA78-3CA6-5ACE-47C0-539C2B8DFF5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{314773C9-7489-2E09-7C85-CA6F03774047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{314773C9-7489-2E09-7C85-CA6F03774047}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{314773C9-7489-2E09-7C85-CA6F03774047}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{314773C9-7489-2E09-7C85-CA6F03774047}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F59CBA78-3CA6-5ACE-47C0-539C2B8DFF5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F59CBA78-3CA6-5ACE-47C0-539C2B8DFF5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F59CBA78-3CA6-5ACE-47C0-539C2B8DFF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F59CBA78-3CA6-5ACE-47C0-539C2B8DFF5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

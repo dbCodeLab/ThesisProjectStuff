@@ -1,0 +1,26 @@
+﻿  RenderAPI_D3D11.cpp
+..\..\source\RenderAPI_D3D11.cpp(132): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+..\..\source\RenderAPI_D3D11.cpp(132): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
+..\..\source\RenderAPI_D3D11.cpp(175): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+..\..\source\RenderAPI_D3D11.cpp(175): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
+..\..\source\RenderAPI_D3D11.cpp(226): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+..\..\source\RenderAPI_D3D11.cpp(226): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
+RenderingPlugin.obj : warning LNK4197: export 'GetRenderEventFunc' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'UnityPluginUnload' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'UnityPluginLoad' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetMeshBuffersFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetTextureFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetTimeFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetViewMatrixFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetProjectionMatrixFromUnity' specified multiple times; using first specification
+RenderingPlugin.obj : warning LNK4197: export 'SetProjectionParameters' specified multiple times; using first specification
+     Creating library C:\Users\Public\Documents\Unity Projects\Saved\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Release\RenderingPlugin.lib and object C:\Users\Public\Documents\Unity Projects\Saved\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Release\RenderingPlugin.exp
+  Generating code
+  93 of 812 functions (11.5%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\Saved\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Release\RenderingPlugin.dll
+  RenderingPlugin.vcxproj -> C:\Users\Public\Documents\Unity Projects\Saved\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\build\x64\Release\RenderingPlugin.pdb (Full PDB)
+  Target Plugin Path is C:\Users\Public\Documents\Unity Projects\Saved\UnityExternalDLL\NativeRenderingPlugin\PluginSource\projects\VisualStudio2015\..\..\..\UnityProject\Assets\Plugins\x86_64
+          1 file(s) copied.
